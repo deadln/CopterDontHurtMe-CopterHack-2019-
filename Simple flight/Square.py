@@ -3,6 +3,7 @@
 #from std_srvs.srv import Trigger
 import sys
 import time
+import math
 
 #rospy.init_node('square_flight')
 
@@ -25,7 +26,7 @@ import time
 #        rospy.sleep(0.2)
 
 class Point():
-    def __init__(self,x,y,z):
+    def __init__(self,x=0,y=0,z=0):
     	self.x = x
     	self.y = y
     	self.z = z
@@ -38,54 +39,43 @@ def nav(p):
 	time.sleep(1)
 	print p.x,p.y,p.z
 
+#Input{x,y,z,side of square, angle of rotation}
 args = sys.argv[:]
-
-for i in range(len(args)):
-    #s = int(ar[i]) * -1
-    print args[i]
 
 start = Point(int(args[1]), int(args[2]), int(args[3]))
 side = int(args[4])
-cq = int(args[5])
+a = float(int(args[5]) % 360) * (math.pi / 180)
 cycles = int(args[6])
-cp1, cp2, cp3 = 0,0,0
-if cq == 1:
-	cp1 = Point(start.x, start.y + side, start.z)
-	cp2 = Point(start.x + side, start.y + side, start.z)
-	cp3 = Point(start.x + side, start.y, start.z)
-elif cq == 2:
-	cp1 = Point(start.x + side, start.y, start.z)
-	cp2 = Point(start.x + side, start.y - side, start.z)
-	cp3 = Point(start.x, start.y - side, start.z)
-elif cq == 3:
-	cp1 = Point(start.x, start.y - side, start.z)
-	cp2 = Point(start.x - side, start.y - side, start.z)
-	cp3 = Point(start.x - side, start.y, start.z)
-elif cq == 4:
-	cp1 = Point(start.x - side, start.y, start.z)
-	cp2 = Point(start.x - side, start.y + side, start.z)
-	cp3 = Point(start.x, start.y + side, start.z)
-else:
-	cp1 = Point(start.x, start.y + side, start.z)
-	cp2 = Point(start.x + side, start.y + side, start.z)
-	cp3 = Point(start.x + side, start.y, start.z)
 
-print start.x,start.y,start.z
-print cp1.x,cp1.y,cp1.z
-print cp2.x,cp2.y,cp2.z
-print cp3.x,cp3.y,cp3.z
+#Vector
+side_v = Point(side * math.cos(a), side * math.sin(a), 0)
+#Vector turned 90 right
+side_v_p = Point(side * math.cos(a + 4.71239), side * math.sin(a + 4.71239),0)
 
+
+cp1 = Point(start.x + side_v.x, start.y + side_v.y, start.z)
+cp2 = Point(cp1.x + side_v_p.x, cp1.y + side_v_p.y, start.z)
+cp3 = Point(cp2.x - side_v.x, cp2.y - side_v.y, start.z)
+
+print "V",side_v.x,side_v.y,side_v.z
+print "V_P",side_v_p.x,side_v_p.y,side_v_p.z
+print "CP1",cp1.x,cp1.y,cp1.z
+print "CP2",cp2.x,cp2.y,cp2.z
+print "CP3",cp3.x,cp3.y,cp3.z
+
+#Flight emulation
 print "Taking off"
 nav(Point(0,0,2))
-
+#Here supposed to be memorizing of base point
 nav(start)
-
+#Main cycle
 for i in range(cycles):
 	nav(cp1)
 	nav(cp2)
 	nav(cp3)
 	nav(start)
 	print
-	
+
+#Returning to base
 nav(Point(0,0,2))
 #land()
