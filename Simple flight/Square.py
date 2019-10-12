@@ -2,8 +2,9 @@
 #from clever import srv
 #from std_srvs.srv import Trigger
 import sys
+import time
 
-#rospy.init_node('flight')
+#rospy.init_node('square_flight')
 
 #get_telemetry = rospy.ServiceProxy('get_telemetry', srv.GetTelemetry)
 #navigate = rospy.ServiceProxy('navigate', srv.Navigate)
@@ -32,6 +33,10 @@ class Point():
 	def __str__(self):
 		s = "Point(" + self.x + " " + self.y + " " + self.z + ")"
 		return s
+
+def nav(p):
+	time.sleep(1)
+	print p.x,p.y,p.z
 
 args = sys.argv[:]
 
@@ -70,3 +75,17 @@ print cp1.x,cp1.y,cp1.z
 print cp2.x,cp2.y,cp2.z
 print cp3.x,cp3.y,cp3.z
 
+print "Taking off"
+nav(Point(0,0,2))
+
+nav(start)
+
+for i in range(cycles):
+	nav(cp1)
+	nav(cp2)
+	nav(cp3)
+	nav(start)
+	print
+	
+nav(Point(0,0,2))
+#land()
