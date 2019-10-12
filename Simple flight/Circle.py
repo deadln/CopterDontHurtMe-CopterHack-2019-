@@ -16,17 +16,23 @@ set_attitude = rospy.ServiceProxy('set_attitude', srv.SetAttitude)
 set_rates = rospy.ServiceProxy('set_rates', srv.SetRates)
 land = rospy.ServiceProxy('land', Trigger)
 
-def navigate_wait(x, y, z, speed, frame_id, tolerance=0.2):
-    print navigate(x=x, y=y, z=z, speed=speed, frame_id=frame_id)#
+def get_distance(x1, y1, z1, x2, y2, z2):
+    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2)
+
+def navigate_wait(x, y, z, speed, frame_id, auto_arm):
+    tolerance = 0.2
+    print navigate(x=x, y=y, z=z, speed=speed, frame_id=frame_id, auto_arm = auto_arm)
 
     while not rospy.is_shutdown():
         telem = get_telemetry(frame_id=frame_id)
+        print telem.z
         if get_distance(x, y, z, telem.x, telem.y, telem.z) < tolerance:
             break
         rospy.sleep(0.2)
 
-navigate_wait(x=0,y=0,z=2,speed=0.2,frame_id="body")
+args = sys.argv[:]
+
+navigate_wait(x=0,y=0,z=2,speed=0.2,frame_id="body", auto_arm="True")
 tel = get_telemetry(frame_id="aruco_map")
 base = Point(tel.x,tel.y,tel.z)
-navigate_wait(x=start.x,y=start.y,x=start.z,speed=0.3,frame_id="aruco_map")
-rospy.wait(2)
+

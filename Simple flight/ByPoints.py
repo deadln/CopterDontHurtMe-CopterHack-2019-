@@ -3,10 +3,9 @@ from clever import srv
 from std_srvs.srv import Trigger
 import sys #sys.argv
 import time
-from Point import Point
-from math 
+import math 
 
-        
+
 
 rospy.init_node('square_flight')
 
@@ -33,7 +32,16 @@ def navigate_wait(x, y, z, speed, frame_id, auto_arm):
         if get_distance(x, y, z, telem.x, telem.y, telem.z) < tolerance:
             break
         rospy.sleep(0.2)
-        
+
+class Point():
+    def __init__(self,x=0,y=0,z=0):
+        self.x = x
+        self.y = y
+        self.z = z
+
+        def __str__(self):
+                s = "Point(" + self.x + " " + self.y + " " + self.z + ")"
+                return s
 
 def get_points():
     user_args = sys.argv[1:]
@@ -46,7 +54,7 @@ def get_points():
         flag = 1
         if flag:
             try:
-                arg = int(user_args[i])
+                arg = float(user_args[i])
                 point[counter] = arg
                 counter += 1
                 if counter == 3:
@@ -64,6 +72,7 @@ def get_points():
     tel = get_telemetry(frame_id="aruco_map")
     base = Point(tel.x, tel.y, tel.z)
 
+
     for i in cycles:
         for point in points_arr:
             print navigate_wait(x=point.x, y=point.y, z=point.z, speed=0.2, frame_id="aruco_map", auto_arm=False)
@@ -75,3 +84,6 @@ def get_points():
     res = land()
     if res.success:
         print "Perfect landing"
+get_points()
+
+
