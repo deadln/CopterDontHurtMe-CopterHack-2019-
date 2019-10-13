@@ -89,6 +89,8 @@ class EMGTelemetryQue:
             self.pose_que.append(self.telemetry.read())
             time.sleep(self.delay)
         data = self.pose_que[-1]
+        data.trigger1 = np.any([d.trigger1 for d in self.pose_que])
+        data.trigger2 = np.any([d.trigger2 for d in self.pose_que])
         self.pose_que.clear()
         return data
 
