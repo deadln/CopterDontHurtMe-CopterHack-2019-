@@ -46,7 +46,7 @@ class Point():
 args = sys.argv[:]
 
 start = Point(float(args[1]), float(args[2]), float(args[3]))
-side = int(args[4])
+side = float(args[4])
 a = float(int(args[5]) % 360) * (math.pi / 180)
 cycles = int(args[6])
 
