@@ -99,7 +99,6 @@ def wait_for_command(telemetry, pose1, pose2):
 
 
 if __name__=="__main__":
-    que_len = 20
     telemetry = EMGTelemetryQue(delay=0.05)
 
     print('Waiting for takeoff')
