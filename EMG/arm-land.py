@@ -58,7 +58,7 @@ print "Take off"
 tel = get_telemetry(frame_id="aruco_map")
 base = Point(tel.x, tel.y, tel.z)
 
-def command(telemetry, pose1, pose2):
+def command(telemetry):
     data = telemetry.read()
     telem = get_telemetry(frame_id='body')
     if (data.pose1, data.pose2) == ('SIDE', 'UP'):
