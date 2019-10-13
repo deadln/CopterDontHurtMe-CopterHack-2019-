@@ -45,7 +45,7 @@ class Point():
 #Input{x,y,z,side of square, angle of rotation}
 args = sys.argv[:]
 
-start = Point(int(args[1]), int(args[2]), int(args[3]))
+start = Point(float(args[1]), float(args[2]), float(args[3]))
 side = int(args[4])
 a = float(int(args[5]) % 360) * (math.pi / 180)
 cycles = int(args[6])
