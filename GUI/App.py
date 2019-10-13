@@ -6,7 +6,11 @@ import ttk as ttk
 import time
 import subprocess
 import sys
+import paramiko
 
+host = "192.168.11.1"
+user = "pi"
+pas = "raspberry"
 
 class Point:
     def __init__(self,x=0,y=0,z=0):
@@ -20,6 +24,16 @@ class Point:
 
 class App:
     def __init__(self):
+
+        self.host = "192.168.11.1"
+        self.user = "pi"
+        self.pas = "raspberry"
+        self.client = paramiko.SSHClient()
+        self.client.load_system_host_keys()
+        self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.client.connect(hostname=self.host, username=self.user, password=self.pas)
+
+
         self.window = Tk()
         self.window.title("Copter don't hurt me")
         self.window.geometry("600x500")
@@ -42,20 +56,23 @@ class App:
             win.destroy()
         def ok():
             #point = Point(p_arr[0], p_arr[1], p_arr[2])
-            side = int(text_side.get())
             circles = int(text_circle.get())
             p = text_start.get().split()
-            data = []
 
+            res = ""
+            res += "python square.py "
             for i in p:
-                data.append(int(i))
-            data.append(side)
-            data.append(int(text_ang.get()))
-            data.append(circles)
+                res += i + " "
+            res+=text_side.get() + " "
+            res+=text_ang.get() + " "
+            res+=text_circle.get()
+            print res
+            stdin, stdout, stderr = self.client.exec_command(res)
+            data = stdout.read() + stderr.read()
             print data
             ################
             #subprocess.call(data)
-            time.sleep(3)
+            #time.sleep(3)
             ################
             self.button_passed = 0
 
@@ -132,9 +149,19 @@ class App:
             self.button_passed = 0
             win.destroy()
             print data
+            res = ""
+            res += "python bypoints.py "
+            for i in range(len(data) - 1):
+                res+=str(data[i]) + " "
+            res+=str(data[-1])
+            print res
+
+            stdin, stdout, stderr = self.client.exec_command(res)
+            dat = stdout.read() + stderr.read()
+            print dat
             ################
             #subprocess.call(data)
-            time.sleep(3)
+
             ################
 
 
@@ -167,14 +194,15 @@ class App:
         show_data = Message(win, text=str_data, padx=5, pady=5, width=480, font="georgia 12")
         show_data.grid(column=0, row=4)
 
-
         show_data.place(x=4, y=249)
 
         win.protocol("WM_DELETE_WINDOW", close)
         win.mainloop()
 
     def circle_fly(self):
-        pass
+        stdin, stdout, stderr = self.client.exec_command("python spiral.py")
+        dat = stdout.read() + stderr.read()
+        print dat
 
     def main_menu(self):
         def square_fly():
