@@ -32,7 +32,8 @@ class App:
         self.client.load_system_host_keys()
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self.client.connect(hostname=self.host, username=self.user, password=self.pas)
-
+	stdin, stdout, stderr = self.client.exec_command("source catkin_ws/devel/setup.bash")
+	data = stdout.read() + stderr.read()
 
         self.window = Tk()
         self.window.title("Copter don't hurt me")
@@ -60,7 +61,7 @@ class App:
             p = text_start.get().split()
 
             res = ""
-            res += "python square.py "
+            res += "python square_f.py "
             for i in p:
                 res += i + " "
             res+=text_side.get() + " "
@@ -200,7 +201,7 @@ class App:
         win.mainloop()
 
     def circle_fly(self):
-        stdin, stdout, stderr = self.client.exec_command("python spiral.py")
+        stdin, stdout, stderr = self.client.exec_command("python spi.py")
         dat = stdout.read() + stderr.read()
         print dat
 
